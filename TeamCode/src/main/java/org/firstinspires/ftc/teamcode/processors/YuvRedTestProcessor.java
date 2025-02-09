@@ -5,7 +5,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.*;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class yuvRedTestProcessor extends OpenCvPipeline {
+public class YuvRedTestProcessor extends OpenCvPipeline {
 
     public int blurValue = ((int) (2));
     private Mat blurGaussianMat = new Mat();
