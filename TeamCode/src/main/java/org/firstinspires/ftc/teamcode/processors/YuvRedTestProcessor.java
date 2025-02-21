@@ -10,7 +10,7 @@ public class YuvRedTestProcessor extends OpenCvPipeline {
     public int blurValue = ((int) (2));
     private Mat blurGaussianMat = new Mat();
 
-    public Scalar lowerYCrCb = new Scalar(44.0, 189.0, 0.0, 0.0);
+    public Scalar lowerYCrCb = new Scalar(44.0, 160.1, 0.0, 0.0);
     public Scalar upperYCrCb = new Scalar(189.0, 255.0, 139.0, 0.0);
     private Mat ycrcbMat = new Mat();
     private Mat ycrcbBinaryMat = new Mat();
