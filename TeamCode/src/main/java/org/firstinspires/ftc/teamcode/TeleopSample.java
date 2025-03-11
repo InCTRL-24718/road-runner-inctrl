@@ -43,17 +43,25 @@ public class TeleopSample extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private DcMotor arm = null;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftDrive  = hardwareMap.get(DcMotor.class, "par0");
+        rightDrive = hardwareMap.get(DcMotor.class, "par1");
+        arm = hardwareMap.get(DcMotor.class, "arm");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         runtime.reset();
@@ -62,9 +70,24 @@ public class TeleopSample extends LinearOpMode {
 
             double leftPower;
             double rightPower;
+            double ticksPerMotorRevolution = 28.0;
+            double gearReduction = 18.9;
+            double wheelCircumference = 101.6 * Math.PI;
 
-            leftPower  = -gamepad1.left_stick_y ;
-            rightPower = -gamepad1.right_stick_y ;
+            double ticksPerWheelRevolution = ticksPerMotorRevolution * gearReduction;
+            double ticksPerMillimeter = ticksPerWheelRevolution / wheelCircumference;
+            double ticksPerInch = ticksPerMillimeter * 25.4;
+
+            leftPower  = gamepad1.left_stick_y ;
+            rightPower = gamepad1.right_stick_y ;
+            if (gamepad1.right_bumper) {
+                arm.setPower(0.5);
+            } else if (gamepad1.left_bumper) {
+                arm.setPower(-0.5);
+            }
+            else {
+                arm.setPower(0);
+            }
 
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
