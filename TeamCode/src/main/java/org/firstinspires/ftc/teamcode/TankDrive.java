@@ -63,29 +63,22 @@ public final class TankDrive {
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-        public static final double TICKS_PER_REV = 537.6;
-        public static final double MAX_RPM = 312.5;
-
-        public static double WHEEL_RADIUS = 1.5; // in
-        public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-        public static double TRACK_WIDTH = 14.5; // in
-
         // drive model parameters
-        public double inPerTick = 0.01309; //TODO: redo the Forward Push Test to calculate this
-        public double trackWidthTicks = 2284.8877509752974; //TODO: redo the Angular Ramp Logger to calculate this
+        public double inPerTick = 48.0 / ((43388.0+42004.0+42981.0+42631.0+42828.0) / 5.0); //average of forward push test tick counts over 48 inches
+        public double trackWidthTicks = 8237.283021333506; //TODO: redo the Angular Ramp Logger to calculate this
 
         // feedforward parameters (in tick units)
-        // practically perfect - should be rechecked as inPerTick is changed
-        public double kS = 0;
-        public double kV = 0.0042798494156910975;
+        // needs fine tuning in big space - should be rechecked as inPerTick is changed
+        public double kS = 1.0743715081953722;
+        public double kV = 0.0002609550108444371;
         public double kA = 0.0001;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 30;
+        public double maxWheelVel = 50;
         public double minProfileAccel = -30;
         public double maxProfileAccel = 50;
 
@@ -95,7 +88,7 @@ public final class TankDrive {
 
         // path controller gains
         public double ramseteZeta = 0.7; // in the range (0, 1)
-        public double ramseteBBar = 2.0; // positive
+        public double ramseteBBar = 1.7; // positive
 
         // turn controller gains
         public double turnGain = 0.0;
@@ -239,8 +232,8 @@ public final class TankDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "Left"));
-        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "Right"));
+        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "par0"));
+        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "par1"));
 
         for (DcMotorEx m : leftMotors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -257,7 +250,7 @@ public final class TankDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new TankDrive.DriveLocalizer(pose);
+        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
