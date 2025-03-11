@@ -63,9 +63,16 @@ public final class TankDrive {
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+        public static final double TICKS_PER_REV = 537.6;
+        public static final double MAX_RPM = 312.5;
+
+        public static double WHEEL_RADIUS = 1.5; // in
+        public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+        public static double TRACK_WIDTH = 14.5; // in
 
         // drive model parameters
         public double inPerTick = 0.01309; //TODO: redo the Forward Push Test to calculate this
@@ -73,12 +80,12 @@ public final class TankDrive {
 
         // feedforward parameters (in tick units)
         // practically perfect - should be rechecked as inPerTick is changed
-        public double kS = 1.4624813126159761;
+        public double kS = 0;
         public double kV = 0.0042798494156910975;
         public double kA = 0.0001;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
+        public double maxWheelVel = 30;
         public double minProfileAccel = -30;
         public double maxProfileAccel = 50;
 
@@ -232,8 +239,8 @@ public final class TankDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left_drive"));
-        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right_drive"));
+        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "Left"));
+        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "Right"));
 
         for (DcMotorEx m : leftMotors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
