@@ -14,16 +14,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name = "OpenCV Red Cup", group = "Vision")
 public class OpenCVRedCupTest extends OpMode {
-
-    private RedCupTestProcessor redCupTestProcessor;
     private VisionPortal visionPortal;
 
     @Override
     public void init() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        redCupTestProcessor = new RedCupTestProcessor();
-        webcam.setPipeline(redCupTestProcessor);
+        RedCupTestProcessor redCupTest = new RedCupTestProcessor();
+        webcam.setPipeline(redCupTest);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
