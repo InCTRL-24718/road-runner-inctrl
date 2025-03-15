@@ -51,14 +51,6 @@ public class ColorDistance extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        ColorBlobLocatorProcessor greenColorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.GREEN)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.entireFrame())
-                .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
-                .build();
-
         ColorBlobLocatorProcessor redColorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.RED)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
@@ -84,9 +76,9 @@ public class ColorDistance extends LinearOpMode
                 .build();
 
         VisionPortal portal = new VisionPortal.Builder()
-                .addProcessors(greenColorLocator, redColorLocator, yellowColorLocator, blueColorLocator)
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 0"))
+                .addProcessors( redColorLocator, yellowColorLocator, blueColorLocator)
+                .setCameraResolution(new Size(640, 480))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .build();
 
 
@@ -99,30 +91,27 @@ public class ColorDistance extends LinearOpMode
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
             // Read the current list
-            List<ColorBlobLocatorProcessor.Blob> greenBlobs = greenColorLocator.getBlobs();
             List<ColorBlobLocatorProcessor.Blob> redBlobs = redColorLocator.getBlobs();
             List<ColorBlobLocatorProcessor.Blob> blueBlobs = blueColorLocator.getBlobs();
             List<ColorBlobLocatorProcessor.Blob> yellowBlobs = yellowColorLocator.getBlobs();
 
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, greenBlobs);  // filter out very small blobs.
             ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, redBlobs);
             ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, yellowBlobs);
             ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blueBlobs);
 
             telemetry.addLine(" Area Density Aspect  Center");
-            telemetry.addData("amount of green blobs: ", greenBlobs.size()); // todo: remove when done debugging
+            telemetry.addData("amount of green blobs: ", blueBlobs.size()); // todo: remove when done debugging
 
-            ColorBlobLocatorProcessor.Blob largestGreenBlob;
             ColorBlobLocatorProcessor.Blob largestRedBlob;
             ColorBlobLocatorProcessor.Blob largestYellowBlob;
             ColorBlobLocatorProcessor.Blob largestBlueBlob;
-            if (greenBlobs.isEmpty()) {
-                largestGreenBlob = null;
-                telemetry.addLine("did not find largest green blob"); // todo: remove when done debugging
+            if (blueBlobs.isEmpty()) {
+                largestBlueBlob = null;
+                telemetry.addLine("did not find largest blue blob"); // todo: remove when done debugging
             }
             else {
-                largestGreenBlob = greenBlobs.get(0);
-                telemetry.addLine("found largest green blob"); // todo: remove when done debugging
+                largestBlueBlob = blueBlobs.get(0);
+                telemetry.addLine("found largest blue blob"); // todo: remove when done debugging
             }
             if (redBlobs.isEmpty()) {
                 largestRedBlob = null;
@@ -143,11 +132,11 @@ public class ColorDistance extends LinearOpMode
                 largestBlueBlob = blueBlobs.get(0);
             }
 
-            if (largestGreenBlob != null) {
-                RotatedRect boxFit = largestGreenBlob.getBoxFit();
+            if (largestBlueBlob != null) {
+                RotatedRect boxFit = largestBlueBlob.getBoxFit();
                 int width = boxFit.boundingRect().width;
                 double distance = getDistance(sampleWidthInMm, width, focalLength, sensorWidthInMm);
-                telemetry.addData("green blob distance in mm: ", distance);
+                telemetry.addData("blue blob distance in mm: ", distance);
             }
 
             if (largestRedBlob != null) {

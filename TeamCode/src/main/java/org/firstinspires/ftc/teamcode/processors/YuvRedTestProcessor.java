@@ -7,30 +7,30 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class YuvRedTestProcessor extends OpenCvPipeline {
 
-    public int blurValue = ((int) (2));
-    private Mat blurGaussianMat = new Mat();
+    public int blurValue = 2;
+    private final Mat blurGaussianMat = new Mat();
 
     public Scalar lowerYCrCb = new Scalar(44.0, 160.1, 0.0, 0.0);
     public Scalar upperYCrCb = new Scalar(189.0, 255.0, 139.0, 0.0);
-    private Mat ycrcbMat = new Mat();
-    private Mat ycrcbBinaryMat = new Mat();
+    private final Mat ycrcbMat = new Mat();
+    private final Mat ycrcbBinaryMat = new Mat();
 
-    private ArrayList<MatOfPoint> contours = new ArrayList<>();
-    private Mat hierarchy = new Mat();
+    private final ArrayList<MatOfPoint> contours = new ArrayList<>();
+    private final Mat hierarchy = new Mat();
 
     public int minArea = 50;
     public int maxArea = 100000;
-    private ArrayList<MatOfPoint> contoursByArea = new ArrayList<>();
+    private final ArrayList<MatOfPoint> contoursByArea = new ArrayList<>();
 
     public Scalar lineColor = new Scalar(173.0, 0.0, 175.0, 0.0);
     public int lineThickness = 1;
 
-    private ArrayList<MatOfPoint> crosshair = new ArrayList<>();
-    private Mat crosshairImage = new Mat();
+    private final ArrayList<MatOfPoint> crosshair = new ArrayList<>();
+    private final Mat crosshairImage = new Mat();
     public int crosshairSize = 32;
 
-    private MatOfPoint2f crosshair2f = new MatOfPoint2f();
-    private ArrayList<RotatedRect> crosshairRotRects = new ArrayList<>();
+    private final MatOfPoint2f crosshair2f = new MatOfPoint2f();
+    private final ArrayList<RotatedRect> crosshairRotRects = new ArrayList<>();
 
     public Scalar lineColor1 = new Scalar(0.0, 255.0, 0.0, 0.0);
     public int lineThickness1 = 2;
@@ -38,9 +38,9 @@ public class YuvRedTestProcessor extends OpenCvPipeline {
     public Scalar lineColor2 = new Scalar(255.0, 255.0, 255.0, 0.0);
     public int lineThickness2 = 2;
 
-    private Mat inputContours = new Mat();
+    private final Mat inputContours = new Mat();
 
-    private Mat inputContoursRotRects = new Mat();
+    private final Mat inputContoursRotRects = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {

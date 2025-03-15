@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -40,9 +41,13 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name="Teleop Driving", group="Linear OpMode")
 public class TeleOpTest extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private DcMotor armMotor = null;
+    private Servo wristServo = null;
+    private Servo clawServo = null;
+
 
     @Override
     public void runOpMode() {
@@ -51,9 +56,16 @@ public class TeleOpTest extends LinearOpMode {
 
         leftDrive  = hardwareMap.get(DcMotor.class, "Left");
         rightDrive = hardwareMap.get(DcMotor.class, "Right");
+        armMotor = hardwareMap.get(DcMotor.class, "Arm");
+        wristServo = hardwareMap.get(Servo.class, "Wrist");
+        clawServo = hardwareMap.get(Servo.class, "Claw");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        clawServo.setPosition(0);
+        wristServo.setPosition(0);
 
         waitForStart();
         runtime.reset();
@@ -69,6 +81,17 @@ public class TeleOpTest extends LinearOpMode {
             // Send calculated power to wheels
             leftDrive.setPower(0.5 * leftPower);
             rightDrive.setPower(0.5 * rightPower);
+
+            if (gamepad1.dpad_up) {
+                armMotor.setPower(1);
+            } else if (gamepad1.dpad_down) {
+                armMotor.setPower(-1);
+            } else {
+                armMotor.setPower(0);
+            }
+
+
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

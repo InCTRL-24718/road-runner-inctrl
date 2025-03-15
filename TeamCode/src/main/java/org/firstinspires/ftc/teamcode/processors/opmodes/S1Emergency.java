@@ -29,15 +29,24 @@
 
 package org.firstinspires.ftc.teamcode.processors.opmodes;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
-import org.rowlandhall.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
-
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.TankDrive;
 
 @Autonomous(name="S1 Specimen", group="Linear OpMode")
 public class S1Emergency extends LinearOpMode {
@@ -45,21 +54,32 @@ public class S1Emergency extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private Servo clawServo = null;
+    private DcMotor armMotor = null;
+    Pose2d initialPose = new Pose2d(-36, 60, 270);
+    TankDrive drive = new TankDrive(hardwareMap, initialPose);
 
     @Override
     public void runOpMode() {
-        TrajectorySequence myTraj = drive.trajectorySequenceBuilder(new Pose2d(-36, 60, 270))
+        TrajectoryActionBuilder myTraj = drive.actionBuilder(initialPose)
                 .turn(Math.toRadians(-40))
-                .lineTo(new Vector2d(-12,36))
-                .turn(Math.toRadians(-40))
-                .addDisplacementMarker(() -> {
-                    //score specimen
-                })
-                .build();
+                .lineToX(12)
+                .turn(Math.toRadians(-40));
+
+        clawServo = hardwareMap.get(Servo.class, "Claw");
+        armMotor = hardwareMap.get(DcMotor.class, "Arm");
+        clawServo.setPosition(0);
+
 
 
         while (opModeIsActive()) {
-            drive.followTrajectorySequence(myTraj);
+            Action trajectoryActionChosen;
+            trajectoryActionChosen = myTraj.build();
+            Actions.runBlocking(
+                    new SequentialAction(
+                            trajectoryActionChosen
+                    )
+            );
         }
     }
 }

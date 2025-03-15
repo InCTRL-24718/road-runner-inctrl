@@ -7,35 +7,35 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class RedCupTestProcessor extends OpenCvPipeline {
 
-    public int blurValue = ((int) (5));
-    private Mat blurGaussianMat = new Mat();
+    public int blurValue = 5;
+    private final Mat blurGaussianMat = new Mat();
 
     public Scalar lowerYCrCb = new Scalar(0, 176.0, 0.0, 0.0);
     public Scalar upperYCrCb = new Scalar(157.0, 255.0, 255.0, 0.0);
-    private Mat ycrcbMat = new Mat();
-    private Mat ycrcbBinaryMat = new Mat();
+    private final Mat ycrcbMat = new Mat();
+    private final Mat ycrcbBinaryMat = new Mat();
 
-    private ArrayList<MatOfPoint> contours = new ArrayList<>();
-    private Mat hierarchy = new Mat();
+    private final ArrayList<MatOfPoint> contours = new ArrayList<>();
+    private final Mat hierarchy = new Mat();
 
     public Scalar lineColor = new Scalar(255.0, 0.0, 0.0, 0.0);
     public int lineThickness = 2;
 
-    private ArrayList<MatOfPoint> crosshair = new ArrayList<>();
-    private Mat crosshairImage = new Mat();
+    private final ArrayList<MatOfPoint> crosshair = new ArrayList<>();
+    private final Mat crosshairImage = new Mat();
     public int crosshairSize = 25;
 
     public int minArea = 50;
     public int maxArea = 70000;
-    private ArrayList<MatOfPoint> crosshairByArea = new ArrayList<>();
+    private final ArrayList<MatOfPoint> crosshairByArea = new ArrayList<>();
 
-    private MatOfPoint2f crosshairByArea2f = new MatOfPoint2f();
-    private ArrayList<RotatedRect> crosshairByAreaRotRects = new ArrayList<>();
+    private final MatOfPoint2f crosshairByArea2f = new MatOfPoint2f();
+    private final ArrayList<RotatedRect> crosshairByAreaRotRects = new ArrayList<>();
 
     public Scalar lineColor1 = new Scalar(0.0, 255.0, 0.0, 0.0);
     public int lineThickness1 = 3;
 
-    private Mat inputRotRects = new Mat();
+    private final Mat inputRotRects = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {

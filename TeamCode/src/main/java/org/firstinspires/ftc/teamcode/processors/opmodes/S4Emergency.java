@@ -29,14 +29,19 @@
 
 package org.firstinspires.ftc.teamcode.processors.opmodes;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
-import org.rowlandhall.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.TankDrive;
 
 
 @Autonomous(name="S1 Specimen", group="Linear OpMode")
@@ -45,21 +50,25 @@ public class S4Emergency extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    Pose2d initialPose = new Pose2d(-36, 60, 270);
+    TankDrive drive = new TankDrive(hardwareMap, initialPose);
 
     @Override
     public void runOpMode() {
-        TrajectorySequence myTraj = drive.trajectorySequenceBuilder(new Pose2d(36, -60, 270))
+        TrajectoryActionBuilder myTraj = drive.actionBuilder(initialPose)
                 .turn(Math.toRadians(-40))
-                .lineTo(new Vector2d(12,-36))
-                .turn(Math.toRadians(140))
-                .addDisplacementMarker(() -> {
-                    //score specimen
-                })
-                .build();
+                .lineToX(-12)
+                .turn(Math.toRadians(140));
 
 
         while (opModeIsActive()) {
-            drive.followTrajectorySequence(myTraj);
+            Action trajectoryActionChosen;
+            trajectoryActionChosen = myTraj.build();
+            Actions.runBlocking(
+                    new SequentialAction(
+                            trajectoryActionChosen
+                    )
+            );
         }
     }
 }

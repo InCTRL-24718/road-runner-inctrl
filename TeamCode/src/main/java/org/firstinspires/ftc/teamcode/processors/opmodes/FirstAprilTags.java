@@ -23,7 +23,7 @@ public class FirstAprilTags extends OpMode {
     public void init() {
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), (VisionProcessor) aprilTagProcessor);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTagProcessor);
 
     }
 
