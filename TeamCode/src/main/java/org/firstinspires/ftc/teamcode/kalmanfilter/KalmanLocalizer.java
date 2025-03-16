@@ -14,17 +14,16 @@ public class KalmanLocalizer extends ThreeDeadWheelLocalizer {
 
     public KalmanLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d pose) {
         super(hardwareMap, inPerTick, pose);
-        filter = new KalmanFilter(0.01, 0.01);
+        filter = new KalmanFilter(0.01, 0.01); // kalman filter parameters - lower is more weight
         imu = hardwareMap.get(IMU.class, "imu");
     }
 
     public Pose2d getPoseEstimate() {
-        Pose2d encoderPose = localizer.getPose();
+        Pose2d odoPose = localizer.getPose();
         double imuHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        Rotation2d imuRotation = Rotation2d.fromDouble(imuHeading);
-        Pose2d imuPose = new Pose2d(encoderPose.position.x, encoderPose.position.y, imuHeading);
+        Pose2d imuPose = new Pose2d(odoPose.position.x, odoPose.position.y, imuHeading);
 
-        filter.update(encoderPose, imuPose);
+        filter.update(odoPose, imuPose);
         return filter.getEstimate();
     }
 }

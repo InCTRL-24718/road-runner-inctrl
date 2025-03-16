@@ -8,8 +8,11 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
+
 public class KalmanLocalizationTest extends LinearOpMode {
     private KalmanLocalizer localizer;
+    private ThreeDeadWheelLocalizer localizer2;
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor par0 = null;
     private DcMotor par1 = null;
@@ -32,7 +35,8 @@ public class KalmanLocalizationTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             localizer.update();
-            Pose2d poseEstimate = localizer.getPoseEstimate();
+            Pose2d kalmanPoseEstimate = localizer.getPoseEstimate();
+            Pose2d odoPoseEstimate = localizer2.getPose();
 
             double leftPower;
             double rightPower;
@@ -46,15 +50,20 @@ public class KalmanLocalizationTest extends LinearOpMode {
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Filtered X", poseEstimate.position.x);
-            telemetry.addData("Filtered Y", poseEstimate.position.y);
-            telemetry.addData("Filtered Heading", Math.toDegrees(poseEstimate.heading.real));
+            telemetry.addData("Filtered X", kalmanPoseEstimate.position.x);
+            telemetry.addData("Filtered Y", kalmanPoseEstimate.position.y);
+            telemetry.addData("Filtered Heading", Math.toDegrees(kalmanPoseEstimate.heading.real));
+
+            telemetry.addData("Raw X", odoPoseEstimate.position.x);
+            telemetry.addData("Raw Y", odoPoseEstimate.position.y);
+            telemetry.addData("Raw Heading", Math.toDegrees(odoPoseEstimate.heading.real));
+
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
-            packet.put("X", poseEstimate.position.x);
-            packet.put("Y", poseEstimate.position.y);
-            packet.put("Heading", Math.toDegrees(poseEstimate.heading.real));
+            packet.put("X", kalmanPoseEstimate.position.x);
+            packet.put("Y", kalmanPoseEstimate.position.y);
+            packet.put("Heading", Math.toDegrees(kalmanPoseEstimate.heading.real));
             dashboard.sendTelemetryPacket(packet);
         }
     }
