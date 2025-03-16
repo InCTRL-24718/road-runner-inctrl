@@ -68,7 +68,7 @@ public class TankDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 48.0 / ((43388.0+42004.0+42981.0+42631.0+42828.0) / 5.0); //average of forward push test tick counts over 48 inches
+        public static final double inPerTick = 48.0 / ((43388.0+42004.0+42981.0+42631.0+42828.0) / 5.0); //average of forward push test tick counts over 48 inches
         public double trackWidthTicks = 8237.283021333506; //TODO: redo the Angular Ramp Logger to calculate this
 
         // feedforward parameters (in tick units)

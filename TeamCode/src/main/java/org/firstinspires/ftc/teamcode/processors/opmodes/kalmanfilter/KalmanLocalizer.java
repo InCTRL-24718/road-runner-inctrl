@@ -5,12 +5,12 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.TankDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
 public class KalmanLocalizer extends ThreeDeadWheelLocalizer {
-    private KalmanFilter filter;
+    private final KalmanFilter filter;
     private ThreeDeadWheelLocalizer localizer;
+    private 
     private IMU imu;
 
     public KalmanLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d pose) {
@@ -19,7 +19,6 @@ public class KalmanLocalizer extends ThreeDeadWheelLocalizer {
         imu = hardwareMap.get(IMU.class, "imu");
     }
 
-    @Override
     public Pose2d getPoseEstimate() {
         Pose2d encoderPose = localizer.getPose();
         double imuHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
