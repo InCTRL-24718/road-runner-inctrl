@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.processors.opmodes.kalmanfilter;
+package org.firstinspires.ftc.teamcode.kalmanfilter;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Rotation2d;
@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 public class KalmanLocalizer extends ThreeDeadWheelLocalizer {
     private final KalmanFilter filter;
     private ThreeDeadWheelLocalizer localizer;
-    private 
     private IMU imu;
 
     public KalmanLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d pose) {
