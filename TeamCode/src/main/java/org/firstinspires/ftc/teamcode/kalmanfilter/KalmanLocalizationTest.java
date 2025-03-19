@@ -20,6 +20,8 @@ public class KalmanLocalizationTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor par0 = null;
     private DcMotor par1 = null;
+    double leftPower;
+    double rightPower;
     private double powerMultiplier = 1.0;
 
     @Override
@@ -27,28 +29,28 @@ public class KalmanLocalizationTest extends LinearOpMode {
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(0, 0, 0); // Robot starting at the origin
 
+        //initialises motors and sets direction
         par0 = hardwareMap.get(DcMotor.class, "par0");
         par1 = hardwareMap.get(DcMotor.class, "par1");
         par0.setDirection(DcMotor.Direction.REVERSE);
         par1.setDirection(DcMotor.Direction.FORWARD);
 
+        //initialises localizers
         localizer = new KalmanLocalizer(hardwareMap, inPerTick, initialPose);
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-
         localizer2 = new ThreeDeadWheelLocalizer(hardwareMap, inPerTick, initialPose);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance(); //Initialises FTC dashboard on http://192.168.43.1:8080/dash
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
 
+            //updates localizers and pose
             Pose2d kalmanPoseEstimate = localizer.getPoseEstimate();
             Pose2d odoPoseEstimate = localizer2.getPose();
             localizer.update();
             localizer2.update();
-
-            double leftPower;
-            double rightPower;
 
             leftPower  = gamepad1.left_stick_y ;
             rightPower = gamepad1.right_stick_y ;
@@ -87,6 +89,7 @@ public class KalmanLocalizationTest extends LinearOpMode {
             packet.put("X", kalmanPoseEstimate.position.x);
             packet.put("Y", kalmanPoseEstimate.position.y);
             packet.put("Heading", Math.toDegrees(kalmanPoseEstimate.heading.real));
+            packet.put("Pose", kalmanPoseEstimate);
 
             packet.put("Raw X", odoPoseEstimate.position.x);
             packet.put("Raw Y", odoPoseEstimate.position.y);
