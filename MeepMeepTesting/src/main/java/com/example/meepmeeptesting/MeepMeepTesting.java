@@ -9,18 +9,18 @@ import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(900);
+        MeepMeep meepMeep = new MeepMeep(700);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 14.1)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36, -60, 270))
-                        .turn(Math.toRadians(55))
-                        .lineTo(new Vector2d(-12,-36))
-                        .turn(Math.toRadians(45))
-                        .addDisplacementMarker(() -> {
-                           //score specimen
-                        })
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36, 60, 0))
+                        .splineTo(new Vector2d(36, 60), Math.toRadians(0))
+                        .splineTo(new Vector2d(0, 0), Math.toRadians(-135))
+                        .splineTo(new Vector2d(-36, -60), Math.toRadians(0))
+                        .splineTo(new Vector2d(36, -60), Math.toRadians(0))
+                        .splineTo(new Vector2d(0, 0), Math.toRadians(135))
+                        .splineTo(new Vector2d(-36, 60), Math.toRadians(0))
                         .build());
 
 
