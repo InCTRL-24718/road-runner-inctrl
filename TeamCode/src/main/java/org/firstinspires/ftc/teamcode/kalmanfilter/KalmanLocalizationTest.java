@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.kalmanfilter;
 
 import static org.firstinspires.ftc.teamcode.TankDrive.Params.inPerTick;
+
+import android.util.Size;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -9,8 +12,12 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.comp.Todo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 //@Disabled
 @TeleOp(name="Kalman Localization Test", group="Localizer Tests")
@@ -29,17 +36,25 @@ public class KalmanLocalizationTest extends LinearOpMode {
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(0, 0, 0); // Robot starting at the origin
 
-        //initialises motors and sets direction
+        //initialises motors and sets direction and zero power behavior
         par0 = hardwareMap.get(DcMotor.class, "par0");
         par1 = hardwareMap.get(DcMotor.class, "par1");
         par0.setDirection(DcMotor.Direction.REVERSE);
         par1.setDirection(DcMotor.Direction.FORWARD);
+        par0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        par1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //initialises localizers
-        localizer = new KalmanLocalizer(hardwareMap, inPerTick, initialPose);
-        localizer2 = new ThreeDeadWheelLocalizer(hardwareMap, inPerTick, initialPose);
+        localizer = new KalmanLocalizer(hardwareMap, inPerTick, initialPose); //initialises kalman localizer
 
         FtcDashboard dashboard = FtcDashboard.getInstance(); //Initialises FTC dashboard on http://192.168.43.1:8080/dash
+
+        //initialises camera without processors via vision portal
+        VisionPortal portal = new VisionPortal.Builder()
+                .setCameraResolution(new Size(640, 480))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .build();
+
+        FtcDashboard.getInstance().startCameraStream(portal, 15); //starts camera stream on dashboard
 
         waitForStart();
         runtime.reset();
@@ -48,18 +63,17 @@ public class KalmanLocalizationTest extends LinearOpMode {
 
             //updates localizers and pose
             Pose2d kalmanPoseEstimate = localizer.getPoseEstimate();
-            Pose2d odoPoseEstimate = localizer2.getPose();
             localizer.update();
-            localizer2.update();
 
             leftPower  = gamepad1.left_stick_y ;
             rightPower = gamepad1.right_stick_y ;
 
+            //TODO: Use DPad up and down to cycle through preset power values, e.g. 0.2, 0.4, 0.6, 0.8, 1
             //allows live control of power multiplier
             if (gamepad1.dpad_up && powerMultiplier < 1.0) {
-                powerMultiplier = powerMultiplier + 0.1;
+                powerMultiplier = powerMultiplier + 0.05;
             } else if (gamepad1.dpad_down && powerMultiplier > 0.2) {
-                powerMultiplier = powerMultiplier - 0.1;
+                powerMultiplier = powerMultiplier - 0.05;
             } else if (gamepad1.triangle) {
                 powerMultiplier = 1.0;
             }
@@ -77,11 +91,6 @@ public class KalmanLocalizationTest extends LinearOpMode {
             telemetry.addData("Filtered Y", kalmanPoseEstimate.position.y);
             telemetry.addData("Filtered Heading", Math.toDegrees(kalmanPoseEstimate.heading.real));
 
-            telemetry.addData(" ", " ");
-            telemetry.addData("Raw X", odoPoseEstimate.position.x);
-            telemetry.addData("Raw Y", odoPoseEstimate.position.y);
-            telemetry.addData("Raw Heading", Math.toDegrees(odoPoseEstimate.heading.real));
-
             telemetry.update();
 
             //FTC dashboard telemetry
@@ -89,11 +98,9 @@ public class KalmanLocalizationTest extends LinearOpMode {
             packet.put("X", kalmanPoseEstimate.position.x);
             packet.put("Y", kalmanPoseEstimate.position.y);
             packet.put("Heading", Math.toDegrees(kalmanPoseEstimate.heading.real));
-            packet.put("Pose", kalmanPoseEstimate);
 
-            packet.put("Raw X", odoPoseEstimate.position.x);
-            packet.put("Raw Y", odoPoseEstimate.position.y);
-            packet.put("Raw Heading", Math.toDegrees(odoPoseEstimate.heading.real));
+            packet.fieldOverlay().setStroke("#3F51B5"); //sets colour of robot on dashboard
+            Drawing.drawRobot(packet.fieldOverlay(), kalmanPoseEstimate); //draws robot on FTC dashboard
 
             dashboard.sendTelemetryPacket(packet);
         }
