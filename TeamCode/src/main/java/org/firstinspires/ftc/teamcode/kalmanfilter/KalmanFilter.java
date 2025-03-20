@@ -13,11 +13,10 @@ public class KalmanFilter {
     }
 
     public void update(Pose2d imuPose, Pose2d odometryPose) {
-        double k = processNoise / (processNoise + measurementNoise); // Kalman gain
-        double headingDifference = odometryPose.heading.minus(imuPose.heading);
-        double x = estimate.position.x + k * (odometryPose.position.x - imuPose.position.x);
-        double y = estimate.position.y + k * (odometryPose.position.y - imuPose.position.y);
-        double heading = estimate.heading.real + (k * headingDifference);
+        double k = processNoise / (processNoise + measurementNoise); // Kalman gain - if k is closer to 1, then we trust the measurement more
+        double x = estimate.position.x + k * (odometryPose.position.x - estimate.position.x);
+        double y = estimate.position.y + k * (odometryPose.position.y - estimate.position.y);
+        double heading = estimate.heading.real + k * (imuPose.heading.real - estimate.heading.real);
 
         estimate = new Pose2d(x, y, heading);
     }
