@@ -34,6 +34,7 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LazyHardwareMapImu;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
@@ -59,23 +60,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public class TankDrive {
+public final class TankDrive {
     public static class Params {
         // IMU orientation
+        // TODO: fill in these values based on
+        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.UP;
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public static final double inPerTick = 48.0 / ((43388.0+42004.0+42981.0+42631.0+42828.0) / 5.0); //average of forward push test tick counts over 48 inches
-        public double trackWidthTicks = 8237.283021333506; //TODO: redo the Angular Ramp Logger to calculate this
+        public double inPerTick = 0;
+        public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        // needs fine tuning in big space - should be rechecked as inPerTick is changed
-        public double kS = 1.0743715081953722;
-        public double kV = 0.0002609550108444371;
-        public double kA = 0.0001;
+        public double kS = 0;
+        public double kV = 0;
+        public double kA = 0;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -88,7 +90,7 @@ public class TankDrive {
 
         // path controller gains
         public double ramseteZeta = 0.7; // in the range (0, 1)
-        public double ramseteBBar = 1.7; // positive
+        public double ramseteBBar = 2.0; // positive
 
         // turn controller gains
         public double turnGain = 0.0;
@@ -151,8 +153,7 @@ public class TankDrive {
             }
 
             // TODO: reverse encoder directions if needed
-            //leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
-            rightEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+            //   leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
 
             this.pose = pose;
         }
@@ -232,8 +233,11 @@ public class TankDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftMotors = Collections.singletonList(hardwareMap.get(DcMotorEx.class, "par0"));
-        rightMotors = Collections.singletonList(hardwareMap.get(DcMotorEx.class, "par1"));
+        // TODO: make sure your config has motors with these names (or change them)
+        //   add additional motors on each side if you have them
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left"));
+        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right"));
 
         for (DcMotorEx m : leftMotors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -242,15 +246,17 @@ public class TankDrive {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        //leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
-        rightMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+        // TODO: reverse motor directions if needed
+        //   leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
 
-        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+        // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new DriveLocalizer(pose);
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
