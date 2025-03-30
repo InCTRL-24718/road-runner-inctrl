@@ -78,7 +78,7 @@ public class KalmanLocalizationTest extends LinearOpMode {
                 powerMultiplier = 1.0;
             }
 
-            //send calculated power to wheels
+            //send calculated power to wheels 
             par0.setPower(powerMultiplier * leftPower);
             par1.setPower(powerMultiplier * rightPower);
 
