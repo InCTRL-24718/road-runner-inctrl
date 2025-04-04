@@ -77,8 +77,7 @@ public class KalmanLocalizationTest extends LinearOpMode {
             } else if (gamepad1.triangle) {
                 powerMultiplier = 1.0;
             }
-
-            ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
+            
 
             //send calculated power to wheels 
             par0.setPower(powerMultiplier * leftPower);
