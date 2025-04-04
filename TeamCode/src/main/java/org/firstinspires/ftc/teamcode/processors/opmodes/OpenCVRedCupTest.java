@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.processors.opmodes;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.*;
 import org.openftc.easyopencv.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+@Disabled
 @TeleOp(name = "OpenCV Red Cup", group = "Vision")
 public class OpenCVRedCupTest extends OpMode {
     private VisionPortal visionPortal;

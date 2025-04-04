@@ -36,7 +36,6 @@ import org.opencv.core.RotatedRect;
 
 import java.util.List;
 
-//currently causes eocvsim to crash
 @TeleOp(name = "OpenCV Color Distance", group = "Vision")
 public class ColorDistance extends LinearOpMode
 {
@@ -153,12 +152,6 @@ public class ColorDistance extends LinearOpMode
                 telemetry.addData("yellow blob distance in mm: ", distance);
             }
 
-            if (largestBlueBlob != null) {
-                RotatedRect boxFit = largestBlueBlob.getBoxFit();
-                int width = boxFit.boundingRect().width;
-                double distance = getDistance(sampleWidthInMm, width, focalLength, sensorWidthInMm);
-                telemetry.addData("blue blob distance in mm: ", distance);
-                }
 
             telemetry.update();
             sleep(50);

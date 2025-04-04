@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.processors.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.processors.DrawRectangleProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
-
+@Disabled
 @Autonomous(name = "OpenCV Rectangle", group = "Vision")
 public class SimpleOpenCVRectangle extends OpMode {
 
