@@ -63,13 +63,17 @@ public class TeleopOutreach extends LinearOpMode {
             leftPower = gamepad1.left_stick_y; rightPower = gamepad1.right_stick_y;
 
             //controls arm motor with bumpers, checking that it doesn't go out of bounds relative to its starting position
-            if (gamepad1.right_bumper && (arm.getCurrentPosition() <= 1000)) {armPower = 0.5;} else if (gamepad1.left_bumper && (arm.getCurrentPosition() >= -1000)) {armPower = -0.5;} else {armPower = 0;}
+            if (gamepad1.right_bumper && (arm.getCurrentPosition() <= 1000)) {armPower = 0.5;}
+            else if (gamepad1.left_bumper && (arm.getCurrentPosition() >= -1000)) {armPower = -0.5;}
+            else {armPower = 0;}
 
             //sets wrist position - x is up, y is down
-            if (gamepad1.x) {wristServo.setPosition(1);} else if (gamepad1.y) {wristServo.setPosition(0);}
+            if (gamepad1.x) {wristServo.setPosition(1);}
+            else if (gamepad1.y) {wristServo.setPosition(0);}
 
             //sets claw position - a is open, b is closed
-            if (gamepad1.a) {clawServo.setPosition(1);} else if (gamepad1.b) {clawServo.setPosition(0);}
+            if (gamepad1.a) {clawServo.setPosition(1);}
+            else if (gamepad1.b) {clawServo.setPosition(0);}
 
             //sets motor powers
             leftDrive.setPower(leftPower); rightDrive.setPower(rightPower); arm.setPower(armPower);
@@ -86,7 +90,7 @@ public class TeleopOutreach extends LinearOpMode {
             redVal = colorSensor.red();
             greenVal = colorSensor.green();
             blueVal = colorSensor.blue();
-            
+
             if ((redVal >= 180) && (greenVal <= 50) && (blueVal >= 50)) {gamepad1.setLedColor(255,0,0, 1000);}
             else if ((redVal <= 50) && (greenVal >= 180) && (blueVal <= 50)) {gamepad1.setLedColor(0,255,0, 1000);}
             else if ((redVal <= 50) && (greenVal <= 50) && (blueVal >= 180)) {gamepad1.setLedColor(0,0,255, 1000);}
