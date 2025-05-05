@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teamopmodes;
 
 import android.media.MediaPlayer;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,6 +38,8 @@ public class TeleopOutreach extends LinearOpMode {
         //creates media players and designates their sources
         MediaPlayer mediaPlayer1 = MediaPlayer.create(hardwareMap.appContext, R.raw.rizz_sound_effect);
         MediaPlayer mediaPlayer2 = MediaPlayer.create(hardwareMap.appContext, R.raw.sponge_stank_noise);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance(); //Initialises FTC dashboard on http://192.168.43.1:8080/dash
 
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -95,11 +99,17 @@ public class TeleopOutreach extends LinearOpMode {
             else if ((redVal <= 50) && (greenVal >= 180) && (blueVal <= 50)) {gamepad1.setLedColor(0,255,0, 1000);}
             else if ((redVal <= 50) && (greenVal <= 50) && (blueVal >= 180)) {gamepad1.setLedColor(0,0,255, 1000);}
 
-
+            //Driver Station Telemetry
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Button pressed:", touchSensor.isPressed());
             telemetry.addData("About to crash?", mediaPlayer2.isPlaying());
             telemetry.update();
+
+            //FTC Dashboard telemetry
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("Button pressed:", touchSensor.isPressed());
+            packet.put("About to crash?", mediaPlayer2.isPlaying());
+            dashboard.sendTelemetryPacket(packet);
         }
     }
 }
